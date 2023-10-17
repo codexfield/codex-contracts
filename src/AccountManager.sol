@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts/utils/structs/EnumerableMapUpgradeable.sol";
+import "@openzeppelin-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import "@openzeppelin-upgradeable/contracts/utils/structs/EnumerableMapUpgradeable.sol";
 
 import "./interfaces/IAccountManager.sol";
 
@@ -26,8 +26,9 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     mapping(address => EnumerableSetUpgradeable.UintSet) private _followers;
 
     // ==================== initialize functions =======================
-    function initialize() public initializer {
+    function initialize(address _owner) public initializer {
         __Ownable_init();
+        transferOwnership(_owner);
         nextAccountId = 1;
     }
 
