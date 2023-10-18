@@ -12,6 +12,12 @@
  forge build --via-ir
 ```
 
+## Test
+
+```shell
+ forge test --via-ir
+```
+
 ## Deploy
 ```shell
 source .env

@@ -6,7 +6,7 @@ import "forge-std/Script.sol";
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
-import "../src/interface/IAccountManager.sol";
+import "../src/interfaces/IAccountManager.sol";
 import {AccountManager} from "../src/AccountManager.sol";
 
 contract UpgradeAccountManagerScript is Script {
@@ -31,7 +31,7 @@ contract UpgradeAccountManagerScript is Script {
         vm.startBroadcast(initOwner);
         AccountManager newImpl = new AccountManager();
         require(address(newImpl) != proxyAccountManager, "same impl address");
-        console.log("new implMarketPlace address: %s", newImpl);
+        console.log("new implMarketPlace address: %s", address(newImpl));
 
         ProxyAdmin(proxyAdmin).upgrade(ITransparentUpgradeableProxy(proxyAccountManager), address(newImpl));
         vm.stopBroadcast();

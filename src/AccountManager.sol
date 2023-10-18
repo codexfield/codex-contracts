@@ -44,7 +44,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         require(_account == msg.sender, "Not allowed");
         require(bytes(_name).length != 0, "Empty name");
         require(accountToId[_account] == 0, "Already registered");
-        require(nameToAccount[_name] != address(0), "Duplicated name");
+        require(nameToAccount[_name] == address(0), "Duplicated name");
 
         accountToId[_account] = nextAccountId;
         idToAccount[nextAccountId] = _account;
