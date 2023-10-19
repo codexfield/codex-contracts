@@ -26,10 +26,10 @@ contract DeployScript is Script {
         require(proxyAdmin == deployer.proxyAdmin(), "wrong proxyAdmin address");
         console.log("proxyAdmin address: %s", proxyAdmin);
         address proxyAccountManager = deployer.calcCreateAddress(address(deployer), uint8(2));
-        require(proxyAccountManager == deployer.proxyAccountManager(), "wrong proxyAccountManager address");
+        require(proxyAccountManager == deployer.proxyContract(), "wrong proxyAccountManager address");
         console.log("proxyAccountManager address: %s", proxyAccountManager);
 
-        deployer.deployAccountManager(address(accountManager), initOwner);
+        deployer.deploy(address(accountManager), initOwner);
         vm.stopBroadcast();
     }
 }

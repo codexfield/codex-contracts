@@ -4,14 +4,14 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
-import "./AccountManager.sol";
+import "./interfaces/IInitializable.sol";
 
 contract Deployer {
     address public proxyAdmin;
-    address public proxyAccountManager;
-    address public implAccountManager;
+    address public proxyContract;
+    address public implContract;
 
-    bool public isAMDeployed;
+    bool public deployed;
 
     constructor() {
         /*
@@ -20,33 +20,33 @@ contract Deployer {
             c. Deploy the proxy contracts, checking if they are equal to the generated addresses before
         */
         proxyAdmin = calcCreateAddress(address(this), uint8(1));
-        proxyAccountManager = calcCreateAddress(address(this), uint8(2));
+        proxyContract = calcCreateAddress(address(this), uint8(2));
 
         // 1. proxyAdmin
         address deployedProxyAdmin = address(new ProxyAdmin());
         require(deployedProxyAdmin == proxyAdmin, "invalid proxyAdmin address");
     }
 
-    function deployAccountManager(
-        address _implAccountManager,
+    function deploy(
+        address _implContract,
         address _owner
     ) public {
-        require(!isAMDeployed, "Already deployed");
+        require(!deployed, "Already deployed");
         require(_owner != address(0), "invalid owner");
 
-        isAMDeployed = true;
-        implAccountManager = _implAccountManager;
+        deployed = true;
+        implContract = _implContract;
 
         // 1. deploy proxy contract
-        address deployedProxyAM = address(new TransparentUpgradeableProxy(implAccountManager, proxyAdmin, ""));
-        require(deployedProxyAM == proxyAccountManager, "invalid proxyAccountManager address");
+        address deployedProxyContract = address(new TransparentUpgradeableProxy(implContract, proxyAdmin, ""));
+        require(deployedProxyContract == proxyContract, "invalid proxy address");
 
         // 2. transfer admin ownership
         ProxyAdmin(proxyAdmin).transferOwnership(_owner);
         require(ProxyAdmin(proxyAdmin).owner() == _owner, "invalid proxyAdmin owner");
 
-        // 3. init AccountManager
-        AccountManager(payable(proxyAccountManager)).initialize(_owner);
+        // 3. init contract
+        IInitializable(payable(proxyContract)).initialize(_owner);
     }
 
     function calcCreateAddress(address _deployer, uint8 _nonce) public pure returns (address) {
