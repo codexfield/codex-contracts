@@ -80,7 +80,10 @@ contract AccountManagerTest is Test {
 
         vm.prank(user1);
         accountManager.register(user1, _name, _bio, _company, _location, _website, _socialAccounts);
-        assertEq(accountManager.nextAccountId(), 3, "nextAccountId expect 3");
+        uint256 _accountId = accountManager.getAccountId(user1);
+        assertEq(_accountId, 2, "account id expect 2");
+        string memory _accountName = accountManager.getAccountName(user1);
+        assertTrue(accountManager.isSameString(_name, _accountName), "account name not equal");
     }
 
     function testEditAccountEmptyName() public {
@@ -178,8 +181,23 @@ contract AccountManagerTest is Test {
         bool ret = accountManager.follow(address(this));
         assertTrue(ret, "expect follow success");
 
+        (uint256[] memory _ids, uint256 length) = accountManager.getFollowing(user1, 0, 100);
+        assertTrue(length == 1, "following number expect to 1");
+        assertEq(_ids[0], 1, "following id expect to 1");
+
+        (_ids, length) = accountManager.getFollower(address(this), 0, 100);
+        assertTrue(length == 1, "follower number expect to 1");
+        assertEq(_ids[0], 2, "follower id expect to 2");
+
         ret = accountManager.unfollow(address(this));
         assertTrue(ret, "expect unfollow success");
+
+        (_ids, length) = accountManager.getFollowing(user1, 0, 100);
+        assertTrue(length == 0, "following number expect to 0");
+
+        (_ids, length) = accountManager.getFollower(address(this), 0, 100);
+        assertTrue(length == 0, "follower number expect to 0");
+
         vm.stopPrank();
     }
 }
