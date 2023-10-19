@@ -19,11 +19,15 @@
 ```
 
 ## Deploy
+
 ```shell
 source .env
-forge script ./script/1-deploy.s.sol --rpc-url ${RPC_TESTNET} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY}
+forge script ./script/1-deploy-account-manager.s.sol --rpc-url ${RPC_TESTNET} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY}
 ```
 
 ## Upgrade
 
-### Upgrade Account Manager
+```shell
+source .env
+forge script ./script/2-upgrade-account-manager.s.sol --rpc-url ${RPC_TESTNET} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY}
+```
