@@ -71,9 +71,9 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         address _account = msg.sender;
         string memory _oldName = accountToName[_account];
         require(bytes(_name).length != 0, "Empty name");
-        require(_isSameString(_name, _oldName) || nameToAccount[_name] == address(0), "Duplicated name");
+        require(isSameString(_name, _oldName) || nameToAccount[_name] == address(0), "Duplicated name");
 
-        if (!_isSameString(_name, _oldName)) {
+        if (!isSameString(_name, _oldName)) {
             delete nameToAccount[_oldName];
             accountToName[_account] = _name;
             nameToAccount[_name] = _account;
@@ -111,7 +111,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         return true;
     }
 
-    function _isSameString(string calldata str1, string memory str2) private pure returns(bool) {
+    function isSameString(string calldata str1, string memory str2) public pure returns(bool) {
         return keccak256(bytes(str1)) == keccak256(bytes(str2));
     }
 }

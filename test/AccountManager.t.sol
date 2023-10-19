@@ -25,11 +25,13 @@ contract AccountManagerTest is Test {
         accountManager = new AccountManager();
         accountManager.initialize(owner);
         proxyAM = address(accountManager);
+
+        accountManager.register(address(this), "test", "I am test", "", "", "", socialAccounts);
     }
 
     function testInitialize() public {
         assertEq(accountManager.owner(), owner, "wrong owner");
-        assertEq(accountManager.nextAccountId(), 1, "nextAccountId expect equal 1");
+        assertEq(accountManager.nextAccountId(), 2, "nextAccountId expect equal 1");
     }
 
     function testRegisterInvalidAccount() public {
@@ -66,4 +68,118 @@ contract AccountManagerTest is Test {
         accountManager.register(user2, "user1", "I am user2", "", "SG", "", socialAccounts);
     }
 
+    function testRegister(
+        string calldata _name,
+        string calldata _bio,
+        string calldata _company,
+        string calldata _location,
+        string calldata _website,
+        string[] calldata _socialAccounts
+    ) public {
+        vm.assume(bytes(_name).length != 0);
+
+        vm.prank(user1);
+        accountManager.register(user1, _name, _bio, _company, _location, _website, _socialAccounts);
+        assertEq(accountManager.nextAccountId(), 3, "nextAccountId expect 3");
+    }
+
+    function testEditAccountEmptyName() public {
+        vm.prank(address(this));
+        vm.expectRevert("Empty name");
+        accountManager.editAccount("", "I am test", "codexfield", "SG", "www.codexfield.com", socialAccounts);
+    }
+
+    function testEditAccountDuplicatedName() public {
+        vm.startPrank(user1);
+        accountManager.register(user1, "user1", "I am user1", "codexfield", "SG", "www.codexfield.com", socialAccounts);
+
+        vm.expectRevert("Duplicated name");
+        accountManager.editAccount("test", "I am user1", "", "SG", "", socialAccounts);
+        vm.stopPrank();
+    }
+
+    function testEditAccountSameName() public {
+        vm.startPrank(user1);
+        accountManager.register(user1, "user1", "I am user1", "codexfield", "SG", "www.codexfield.com", socialAccounts);
+        accountManager.editAccount("user1", "I am user1", "", "SG", "", socialAccounts);
+        assertEq(accountManager.companies(user1), "", "user1's company expect empty");
+        vm.stopPrank();
+    }
+
+    function testEditAccountNewName() public {
+        vm.startPrank(user1);
+        accountManager.register(user1, "user1", "I am user1", "codexfield", "SG", "www.codexfield.com", socialAccounts);
+        accountManager.editAccount("new_user1", "I am new user1", "", "SG", "", socialAccounts);
+        assertEq(accountManager.nameToAccount("user1"), address(0), "old name expect deleted");
+        vm.stopPrank();
+    }
+
+    function testEditAccount(
+        string calldata _name,
+        string calldata _bio,
+        string calldata _company,
+        string calldata _location,
+        string calldata _website,
+        string[] calldata _socialAccounts
+    ) public {
+        vm.assume(bytes(_name).length != 0);
+        vm.assume(!accountManager.isSameString(_name, "test"));
+
+        vm.startPrank(user1);
+        accountManager.register(user1, "user1", "I am user1", "codexfield", "SG", "www.codexfield.com", socialAccounts);
+        bool ret = accountManager.editAccount(_name, _bio, _company, _location, _website, _socialAccounts);
+        assertTrue(ret, "expect success");
+        vm.stopPrank();
+    }
+
+    function testFollowUnregistered() public {
+        vm.prank(user1);
+        vm.expectRevert("Not registered");
+        accountManager.follow(address(this));
+
+        vm.prank(address(this));
+        vm.expectRevert("Not registered");
+        accountManager.follow(user1);
+    }
+
+    function testFollowAlreadyFollowed() public {
+        vm.startPrank(user1);
+        accountManager.register(user1, "user1", "I am user1", "codexfield", "SG", "www.codexfield.com", socialAccounts);
+        bool ret = accountManager.follow(address(this));
+        assertTrue(ret, "expect follow success");
+
+        vm.expectRevert("Already followed");
+        accountManager.follow(address(this));
+        vm.stopPrank();
+    }
+
+    function testUnfollowUnregistered() public {
+        vm.prank(user1);
+        vm.expectRevert("Not registered");
+        accountManager.unfollow(address(this));
+
+        vm.prank(address(this));
+        vm.expectRevert("Not registered");
+        accountManager.unfollow(user1);
+    }
+
+    function testUnfollowNotFollowed() public {
+        vm.startPrank(user1);
+        accountManager.register(user1, "user1", "I am user1", "codexfield", "SG", "www.codexfield.com", socialAccounts);
+
+        vm.expectRevert("Not following");
+        accountManager.unfollow(address(this));
+        vm.stopPrank();
+    }
+
+    function testUnfollowSuccess() public {
+        vm.startPrank(user1);
+        accountManager.register(user1, "user1", "I am user1", "codexfield", "SG", "www.codexfield.com", socialAccounts);
+        bool ret = accountManager.follow(address(this));
+        assertTrue(ret, "expect follow success");
+
+        ret = accountManager.unfollow(address(this));
+        assertTrue(ret, "expect unfollow success");
+        vm.stopPrank();
+    }
 }
