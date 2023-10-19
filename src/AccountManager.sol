@@ -32,6 +32,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         nextAccountId = 1;
     }
 
+    // ==================== External functions =======================
     function register(
         address _account,
         string calldata _name,
@@ -111,6 +112,84 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         return true;
     }
 
+    // ==================== External view functions =======================
+    function getAccountId(address _account) external view returns(uint256) {
+        return accountToId[_account];
+    }
+
+    function getAccountName(address _account) external view returns(string memory) {
+        return accountToName[_account];
+    }
+
+    function getBatchAccountById(uint256[] calldata _ids) external view returns(address[] memory _accounts) {
+        for (uint256 i; i < _ids.length; ++i) {
+            _accounts[i] = idToAccount[_ids[i]];
+        }
+    }
+
+    function getBatchAccountName(address[] calldata _accounts) external view returns(string[] memory _names) {
+        for (uint256 i; i < _accounts.length; ++i) {
+            _names[i] = accountToName[_accounts[i]];
+        }
+    }
+
+    function getAccountDetails(address _account) external view returns(
+        uint256 _id,
+        string memory _name,
+        string memory _bio,
+        string memory _company,
+        string memory _location,
+        string memory _website,
+        string[] memory _socialAccounts,
+        uint256 _followingNumber,
+        uint256 _followerNumber
+    ) {
+        _id = accountToId[_account];
+        _name = accountToName[_account];
+        _bio = biographies[_account];
+        _company = companies[_account];
+        _location = locations[_account];
+        _website = websites[_account];
+        _socialAccounts = socialAccounts[_account];
+        _followingNumber = _followings[_account].length();
+        _followerNumber = _followers[_account].length();
+    }
+
+    function getFollowing(address _account, uint256 offset, uint256 limit) external view returns(uint256[] memory _ids, uint256 _totalLength) {
+        _totalLength = _followings[_account].length();
+        if (offset >= _totalLength) {
+            return (_ids, _totalLength);
+        }
+
+        uint256 count = _totalLength - offset;
+        if (count > limit) {
+            count = limit;
+        }
+
+        _ids = new uint256[](count);
+        for (uint256 i; i < count; ++i) {
+            _ids[i] = _followings[_account].at(offset+i);
+        }
+    }
+
+    function getFollower(address _account, uint256 offset, uint256 limit) external view returns(uint256[] memory _ids, uint256 _totalLength) {
+        _totalLength = _followers[_account].length();
+        if (offset >= _totalLength) {
+            return (_ids, _totalLength);
+        }
+
+        uint256 count = _totalLength - offset;
+        if (count > limit) {
+            count = limit;
+        }
+
+        _ids = new uint256[](count);
+        for (uint256 i; i < count; ++i) {
+            _ids[i] = _followers[_account].at(offset+i);
+        }
+    }
+
+    // ==================== Utils functions =======================
     function isSameString(string calldata str1, string memory str2) public pure returns(bool) {
         return keccak256(bytes(str1)) == keccak256(bytes(str2));
     }
