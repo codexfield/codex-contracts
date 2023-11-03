@@ -6,6 +6,7 @@ interface IAccountManager {
     function register(
         address _account,
         string calldata _name,
+        string calldata _avatar,
         string calldata _bio,
         string calldata _company,
         string calldata _location,
@@ -15,6 +16,7 @@ interface IAccountManager {
 
     function editAccount(
         string calldata _name,
+        string calldata _avatar,
         string calldata _bio,
         string calldata _company,
         string calldata _location,
@@ -35,6 +37,7 @@ interface IAccountManager {
     function getAccountDetails(address _account) external view returns(
         uint256 _id,
         string memory _name,
+        string memory _avatar,
         string memory _bio,
         string memory _company,
         string memory _location,

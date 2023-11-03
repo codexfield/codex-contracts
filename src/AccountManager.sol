@@ -14,6 +14,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     mapping(uint256 => address) public idToAccount;
     mapping(address => string) public accountToName;
     mapping(string => address) public nameToAccount;
+    mapping(address => string) public avatars;
     mapping(address => string) public biographies;
     mapping(address => string) public companies;
     mapping(address => string) public locations;
@@ -36,6 +37,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     function register(
         address _account,
         string calldata _name,
+        string calldata _avatar,
         string calldata _bio,
         string calldata _company,
         string calldata _location,
@@ -53,6 +55,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
 
         accountToName[_account] = _name;
         nameToAccount[_name] = _account;
+        avatars[_account] = _avatar;
         biographies[_account] = _bio;
         companies[_account] = _company;
         locations[_account] = _location;
@@ -63,6 +66,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
 
     function editAccount(
         string calldata _name,
+        string calldata _avatar,
         string calldata _bio,
         string calldata _company,
         string calldata _location,
@@ -80,6 +84,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
             nameToAccount[_name] = _account;
         }
 
+        avatars[_account] = _avatar;
         biographies[_account] = _bio;
         companies[_account] = _company;
         locations[_account] = _location;
@@ -136,6 +141,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     function getAccountDetails(address _account) external view returns(
         uint256 _id,
         string memory _name,
+        string memory _avatar,
         string memory _bio,
         string memory _company,
         string memory _location,
@@ -146,6 +152,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     ) {
         _id = accountToId[_account];
         _name = accountToName[_account];
+        _avatar = avatars[_account];
         _bio = biographies[_account];
         _company = companies[_account];
         _location = locations[_account];

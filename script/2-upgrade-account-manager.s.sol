@@ -31,7 +31,7 @@ contract UpgradeAccountManagerScript is Script {
         vm.startBroadcast(initOwner);
         AccountManager newImpl = new AccountManager();
         require(address(newImpl) != proxyAccountManager, "same impl address");
-        console.log("new implMarketPlace address: %s", address(newImpl));
+        console.log("new implAccountManager address: %s", address(newImpl));
 
         ProxyAdmin(proxyAdmin).upgrade(ITransparentUpgradeableProxy(proxyAccountManager), address(newImpl));
         vm.stopBroadcast();
