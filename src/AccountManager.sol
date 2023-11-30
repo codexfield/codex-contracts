@@ -26,6 +26,12 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     // user address => user followers' account ids, ordered by followed time.
     mapping(address => EnumerableSetUpgradeable.UintSet) private _followers;
 
+    // ========================== events ===============================
+    event Register(address indexed account, uint256 indexed accountId, string name);
+    event EditAccount(address indexed account, string oldName, string newName);
+    event Follow(address indexed account, address indexed targetAccount);
+    event Unfollow(address indexed account, address indexed targetAccount);
+
     // ==================== initialize functions =======================
     function initialize(address _owner) public initializer {
         __Ownable_init();
@@ -61,6 +67,8 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         locations[_account] = _location;
         websites[_account] = _website;
         socialAccounts[_account] = _socialAccounts;
+
+        emit Register(_account, accountToId[_account], _name);
         return true;
     }
 
@@ -90,10 +98,12 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         locations[_account] = _location;
         websites[_account] = _website;
         socialAccounts[_account] = _socialAccounts;
+
+        emit EditAccount(_account, _oldName, _name);
         return true;
     }
 
-    function follow(address _targetAddr) external returns (bool) {
+    function follow(address _targetAddr) public returns (bool) {
         address _addr = msg.sender;
         uint256 _id = accountToId[_addr];
         uint256 _targetId = accountToId[_targetAddr];
@@ -102,10 +112,12 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
 
         _followings[_addr].add(_targetId);
         _followers[_targetAddr].add(_id);
+
+        emit Follow(_addr, _targetAddr);
         return true;
     }
 
-    function unfollow(address _targetAddr) external returns (bool) {
+    function unfollow(address _targetAddr) public returns (bool) {
         address _addr = msg.sender;
         uint256 _id = accountToId[_addr];
         uint256 _targetId = accountToId[_targetAddr];
@@ -114,6 +126,28 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
 
         _followings[_addr].remove(_targetId);
         _followers[_targetAddr].remove(_id);
+
+        emit Unfollow(_addr, _targetAddr);
+        return true;
+    }
+
+    function batchFollow(address[] calldata _targetAddrs) external returns (bool) {
+        require(_targetAddrs.length > 0, "Empty addresses");
+
+        for (uint256 i; i < _targetAddrs.length; ++i) {
+            follow(_targetAddrs[i]);
+        }
+
+        return true;
+    }
+
+    function batchUnfollow(address[] calldata _targetAddrs) external returns (bool) {
+        require(_targetAddrs.length > 0, "Empty addresses");
+
+        for (uint256 i; i < _targetAddrs.length; ++i) {
+            unfollow(_targetAddrs[i]);
+        }
+
         return true;
     }
 

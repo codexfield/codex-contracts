@@ -26,6 +26,8 @@ interface IAccountManager {
 
     function follow(address _targetAddr) external returns (bool);
     function unfollow(address _targetAddr) external returns (bool);
+    function batchFollow(address[] calldata _targetAddrs) external returns (bool);
+    function batchUnfollow(address[] calldata _targetAddrs) external returns (bool);
 
     // ==================== View functions ============================
     function getAccountId(address _account) external view returns(uint256);
