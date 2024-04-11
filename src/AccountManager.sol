@@ -196,6 +196,30 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         _followerNumber = _followers[_account].length();
     }
 
+    function getAccountDetailsByName(string memory _name) external view returns(
+        uint256 _id,
+        address _account,
+        string memory _avatar,
+        string memory _bio,
+        string memory _company,
+        string memory _location,
+        string memory _website,
+        string[] memory _socialAccounts,
+        uint256 _followingNumber,
+        uint256 _followerNumber
+    ) {
+        _account = nameToAccount[_name];
+        _id = accountToId[_account];
+        _avatar = avatars[_account];
+        _bio = biographies[_account];
+        _company = companies[_account];
+        _location = locations[_account];
+        _website = websites[_account];
+        _socialAccounts = socialAccounts[_account];
+        _followingNumber = _followings[_account].length();
+        _followerNumber = _followers[_account].length();
+    }
+
     function getFollowing(address _account, uint256 offset, uint256 limit) external view returns(uint256[] memory _ids, uint256 _totalLength) {
         _totalLength = _followings[_account].length();
         if (offset >= _totalLength) {

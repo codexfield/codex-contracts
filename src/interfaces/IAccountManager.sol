@@ -48,4 +48,16 @@ interface IAccountManager {
         uint256 _followingNumber,
         uint256 _followerNumber
     );
+    function getAccountDetailsByName(string memory _name) external view returns(
+        uint256 _id,
+        address _account,
+        string memory _avatar,
+        string memory _bio,
+        string memory _company,
+        string memory _location,
+        string memory _website,
+        string[] memory _socialAccounts,
+        uint256 _followingNumber,
+        uint256 _followerNumber
+    );
 }
