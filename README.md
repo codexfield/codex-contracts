@@ -22,12 +22,12 @@
 
 ```shell
 source .env
-forge script ./script/1-deploy-account-manager.s.sol --rpc-url ${RPC_TESTNET} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use 0.8.20
+forge script ./script/1-deploy-account-manager.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use 0.8.20
 ```
 
 ## Upgrade
 
 ```shell
 source .env
-forge script ./script/2-upgrade-account-manager.s.sol --rpc-url ${RPC_TESTNET} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use 0.8.20
+forge script ./script/2-upgrade-account-manager.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use 0.8.20
 ```
