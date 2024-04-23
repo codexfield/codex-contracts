@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
 import "../src/CodexHub.sol";
-import "@greenfield-contracts/contracts/middle-layer/resource-mirror/BucketHub.sol";
+import "@bnb-chain/greenfield-contracts/contracts/middle-layer/resource-mirror/BucketHub.sol";
 
 contract CodexHubTest is Test {
     address public constant owner = address(0x0000000000000000000000000000000000000001);

@@ -2,11 +2,11 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/console.sol";
-import "@openzeppelin-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import "@greenfield-contracts/contracts/middle-layer/TokenHub.sol";
-import "@greenfield-contracts/contracts/middle-layer/resource-mirror/BucketHub.sol";
-import "@greenfield-contracts/contracts/middle-layer/resource-mirror/storage/BucketStorage.sol";
-import "@greenfield-contracts/contracts/CrossChain.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@bnb-chain/greenfield-contracts/contracts/middle-layer/TokenHub.sol";
+import "@bnb-chain/greenfield-contracts/contracts/middle-layer/resource-mirror/BucketHub.sol";
+import "@bnb-chain/greenfield-contracts/contracts/middle-layer/resource-mirror/storage/BucketStorage.sol";
+import "@bnb-chain/greenfield-contracts/contracts/CrossChain.sol";
 
 contract CodexHub is OwnableUpgradeable {
     uint256 public crossTransferAmount;
@@ -34,7 +34,7 @@ contract CodexHub is OwnableUpgradeable {
         (uint256 relayFee, uint256 minAckRelayFee) = CrossChain(crossChainAddr).getRelayFees();
         uint256 createValue = relayFee + minAckRelayFee;
         uint256 transferValue = relayFee + minAckRelayFee + crossTransferAmount;
-        require(msg.value >= createValue + transferValue, "Insuffient funds");
+        require(msg.value >= createValue + transferValue, "Insufficient funds");
 
         BucketHub bucketHub = BucketHub(bucketHubAddr);
         BucketStorage.CreateBucketSynPackage memory pkg;

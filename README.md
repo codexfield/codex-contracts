@@ -2,6 +2,7 @@
 ## Install Dependencies
 
 ```shell
+ yarn install
  forge install openzeppelin/openzeppelin-contracts@v4.9.3 --no-commit
  forge install openzeppelin/openzeppelin-contracts-upgradeable@v4.9.3 --no-commit
  forge install bnb-chain/greenfield-contracts@v1.2.0 --no-commit

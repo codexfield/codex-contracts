@@ -1,3 +1,4 @@
-@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/
-@openzeppelin/=lib/openzeppelin-contracts
-@greenfield-contracts/=lib/greenfield-contracts/
+@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/
+@openzeppelin/contracts-upgradeable/=node_modules/@openzeppelin/contracts-upgradeable/
+@bnb-chain/greenfield-contracts/=node_modules/@bnb-chain/greenfield-contracts/
+forge-std/=lib/forge-std/src/
