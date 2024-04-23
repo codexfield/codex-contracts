@@ -10,17 +10,14 @@ import "@bnb-chain/greenfield-contracts/contracts/CrossChain.sol";
 
 contract CodexHub is OwnableUpgradeable {
     uint256 public crossTransferAmount;
+    address public bucketHubAddr;
+    address public tokenHubAddr;
+    address public crossChainAddr;
 
     function initialize(address _owner) public initializer {
         crossTransferAmount = 2e15;
         __Ownable_init();
         transferOwnership(_owner);
-    }
-
-    function createBucket(bool isPublic, string calldata _name, address _primarySpAddress, uint32 _globalVirtualGroupFamilyId, bytes calldata _extraData) external payable returns (bool) {
-        address bucketHubAddr;
-        address tokenHubAddr;
-        address crossChainAddr;
         if (block.chainid == 56) {
             tokenHubAddr = 0xeA97dF87E6c7F68C9f95A69dA79E19B834823F25;
             bucketHubAddr = 0xE909754263572F71bc6aFAc837646A93f5818573;
@@ -29,8 +26,12 @@ contract CodexHub is OwnableUpgradeable {
             tokenHubAddr = 0xED8e5C546F84442219A5a987EE1D820698528E04;
             bucketHubAddr = 0x5BB17A87D03620b313C39C24029C94cB5714814A;
             crossChainAddr = 0xa5B2c9194131A4E0BFaCbF9E5D6722c873159cb7;
+        } else {
+            require(false, "Not support");
         }
+    }
 
+    function createBucket(bool isPublic, string calldata _name, address _primarySpAddress, uint32 _globalVirtualGroupFamilyId, bytes calldata _extraData) external payable returns (bool) {
         (uint256 relayFee, uint256 minAckRelayFee) = CrossChain(crossChainAddr).getRelayFees();
         uint256 createValue = relayFee + minAckRelayFee;
         uint256 transferValue = relayFee + minAckRelayFee + crossTransferAmount;
