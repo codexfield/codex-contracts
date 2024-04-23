@@ -3,6 +3,8 @@ cache/
 out/
 broadcast/
 
+node_modules/
+
 # Dotenv file
 .env
 
