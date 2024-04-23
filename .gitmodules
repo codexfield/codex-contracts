@@ -10,3 +10,7 @@
 	path = lib/openzeppelin-contracts-upgradeable
 	url = https://github.com/openzeppelin/openzeppelin-contracts-upgradeable
 	branch = v4.9.3
+[submodule "lib/greenfield-contracts"]
+	path = lib/greenfield-contracts
+	url = https://github.com/bnb-chain/greenfield-contracts
+	branch = v1.2.0
