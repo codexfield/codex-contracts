@@ -2,9 +2,7 @@
 ## Install Dependencies
 
 ```shell
- forge install openzeppelin/openzeppelin-contracts@v4.9.3 --no-commit
- forge install openzeppelin/openzeppelin-contracts-upgradeable@v4.9.3 --no-commit
- forge install bnb-chain/greenfield-contracts@v1.2.0 --no-commit
+ yarn install
 ```
 
 ## Build
@@ -25,7 +23,7 @@
 ```shell
 source .env
 forge script ./script/1-deploy-account-manager.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use 0.8.20
-forge script ./script/1-deploy-codex-hub.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use 0.8.20
+forge script ./script/3-deploy-codex-hub.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use 0.8.20
 ```
 
 ## Upgrade
@@ -33,5 +31,5 @@ forge script ./script/1-deploy-codex-hub.s.sol --rpc-url ${RPC_URL} --legacy --b
 ```shell
 source .env
 forge script ./script/2-upgrade-account-manager.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use 0.8.20
-forge script ./script/2-upgrade-codex-hub.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use 0.8.20
+forge script ./script/4-upgrade-codex-hub.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use 0.8.20
 ```
