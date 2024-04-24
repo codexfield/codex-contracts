@@ -47,10 +47,10 @@ contract CodexHubTest is Test {
     function testCreateBucket() public {
         vm.startPrank(user2);
         BucketHub bucketHub = BucketHub(bucketHubAddr);
-        bucketHub.grant(address(codexHub), 3, block.timestamp + 100 days);
+        bucketHub.grant(address(codexHub), 3, ~uint256(0));
 
         uint256 val = 2 * (25e13 + 130e13) + codexHub.crossTransferAmount();
-        bool isSuccess = codexHub.createBucket{value: val}(false, "myy-repo", primarySp1, 40, "");
+        bool isSuccess = codexHub.createBucket{value: val}(false, "my-repo", primarySp1, 40, "");
         assertEq(isSuccess, true, "create bucket failed");
         console.log("bal: ", user2.balance);
         vm.stopPrank();

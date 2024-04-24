@@ -8,7 +8,9 @@ import "@bnb-chain/greenfield-contracts/contracts/middle-layer/resource-mirror/B
 import "@bnb-chain/greenfield-contracts/contracts/middle-layer/resource-mirror/storage/BucketStorage.sol";
 import "@bnb-chain/greenfield-contracts/contracts/CrossChain.sol";
 
-contract CodexHub is OwnableUpgradeable {
+import "./interfaces/ICodexHub.sol";
+
+contract CodexHub is ICodexHub, OwnableUpgradeable {
     uint256 public crossTransferAmount;
     address public bucketHubAddr;
     address public tokenHubAddr;
@@ -62,6 +64,10 @@ contract CodexHub is OwnableUpgradeable {
         require(transferSuccess, "Cross-chain transfer failed");
 
         return transferSuccess;
+    }
+
+    function getCrossTransferAmount() external view returns (uint256) {
+        return crossTransferAmount;
     }
 
     function setCrossTransferAmount(uint256 amount) external onlyOwner {
