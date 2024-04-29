@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableMapUpgradeable.sol";
+import "@bnb-chain/greenfield-contracts/contracts/interface/ITokenHub.sol";
+import "@bnb-chain/greenfield-contracts/contracts/interface/ICrossChain.sol";
 
 import "./interfaces/IAccountManager.sol";
 
@@ -49,7 +51,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         string calldata _location,
         string calldata _website,
         string[] calldata _socialAccounts
-    ) external returns (bool) {
+    ) external payable returns (bool) {
         require(_account == msg.sender, "Not allowed");
         require(bytes(_name).length != 0, "Empty name");
         require(accountToId[_account] == 0, "Already registered");
@@ -69,7 +71,9 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         socialAccounts[_account] = _socialAccounts;
 
         emit Register(_account, accountToId[_account], _name);
-        return true;
+
+        bool success = transferOut();
+        return success;
     }
 
     function editAccount(
@@ -257,5 +261,25 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     // ==================== Utils functions =======================
     function isSameString(string calldata str1, string memory str2) public pure returns(bool) {
         return keccak256(bytes(str1)) == keccak256(bytes(str2));
+    }
+
+    function transferOut() public payable returns(bool) {
+        address tokenHubAddr;
+        address crossChainAddr;
+        if (block.chainid == 56) {
+            tokenHubAddr = 0xeA97dF87E6c7F68C9f95A69dA79E19B834823F25;
+            crossChainAddr = 0x77e719b714be09F70D484AB81F70D02B0E182f7d;
+        } else if (block.chainid == 97) {
+            tokenHubAddr = 0xED8e5C546F84442219A5a987EE1D820698528E04;
+            crossChainAddr = 0xa5B2c9194131A4E0BFaCbF9E5D6722c873159cb7;
+        } else {
+            require(false, "Not support");
+        }
+        (uint256 relayFee, uint256 minAckRelayFee) = ICrossChain(crossChainAddr).getRelayFees();
+        require(msg.value >= 5e15 + relayFee + minAckRelayFee, "Insufficient funds");
+
+        bool transferSuccess = ITokenHub(tokenHubAddr).transferOut{value: msg.value}(msg.sender, 5e15);
+        require(transferSuccess, "TransferOut failed");
+        return transferSuccess;
     }
 }

@@ -12,7 +12,7 @@ interface IAccountManager {
         string calldata _location,
         string calldata _website,
         string[] calldata _socialAccounts
-    ) external returns (bool);
+    ) external payable returns (bool);
 
     function editAccount(
         string calldata _name,
