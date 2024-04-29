@@ -72,8 +72,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
 
         emit Register(_account, accountToId[_account], _name);
 
-        bool success = transferOut();
-        return success;
+        return transferOut();
     }
 
     function editAccount(
