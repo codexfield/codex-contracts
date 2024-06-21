@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@bnb-chain/greenfield-contracts": "1.2.0",
-    "@openzeppelin/contracts": "4.9.3",
-    "@openzeppelin/contracts-upgradeable": "4.9.3"
-  }
-}

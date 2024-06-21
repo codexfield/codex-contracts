@@ -3,8 +3,9 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 
-import "../src/Deployer.sol";
 import "../src/AccountManager.sol";
+import "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 
 contract DeployScript is Script {
     address public initOwner;
@@ -17,19 +18,17 @@ contract DeployScript is Script {
 
     function run() public {
         vm.startBroadcast(initOwner);
-        Deployer deployer = new Deployer();
-        console.log("deployer address: %s", address(deployer));
         AccountManager accountManager = new AccountManager();
         console.log("implAccountManager address: %s", address(accountManager));
 
-        address proxyAdmin = deployer.calcCreateAddress(address(deployer), uint8(1));
-        require(proxyAdmin == deployer.proxyAdmin(), "wrong proxyAdmin address");
-        console.log("proxyAdmin address: %s", proxyAdmin);
-        address proxyAccountManager = deployer.calcCreateAddress(address(deployer), uint8(2));
-        require(proxyAccountManager == deployer.proxyContract(), "wrong proxyAccountManager address");
-        console.log("proxyAccountManager address: %s", proxyAccountManager);
+        ProxyAdmin proxyAdmin = new ProxyAdmin();
+        console.log("proxyAdmin address: %s", address(proxyAdmin));
 
-        deployer.deploy(address(accountManager), initOwner);
+        TransparentUpgradeableProxy proxy = new TransparentUpgradeableProxy(address(accountManager), address(proxyAdmin), "");
+        console.log("proxyAccountManager address: %s", address(proxy));
+
+        accountManager = AccountManager(payable(proxy));
+        accountManager.initialize(initOwner);
         vm.stopBroadcast();
     }
 }
