@@ -13,6 +13,8 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
 
     uint256 public nextAccountId;
     address public operator;
+    address public tokenHubAddr;
+    address public crossChainAddr;
     mapping(address => uint256) public accountToId;
     mapping(uint256 => address) public idToAccount;
     mapping(address => string) public accountToName;
@@ -41,6 +43,17 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         transferOwnership(_owner);
         nextAccountId = 1;
         operator = _owner;
+
+        require(block.chainid == 56 || block.chainid == 97, "Chain not support");
+        // BSC Testnet contracts
+        if (block.chainid == 97) {
+            tokenHubAddr = 0xED8e5C546F84442219A5a987EE1D820698528E04;
+            crossChainAddr = 0xa5B2c9194131A4E0BFaCbF9E5D6722c873159cb7;
+            return;
+        }
+        // BSC Mainnet contracts
+        tokenHubAddr = 0xeA97dF87E6c7F68C9f95A69dA79E19B834823F25;
+        crossChainAddr = 0x77e719b714be09F70D484AB81F70D02B0E182f7d;
     }
 
     // ==================== External functions =======================
@@ -159,6 +172,14 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         return true;
     }
 
+    function transferOut() public payable returns(bool) {
+        (uint256 relayFee, uint256 minAckRelayFee) = ICrossChain(crossChainAddr).getRelayFees();
+        require(msg.value > relayFee + minAckRelayFee, "Insufficient funds");
+        bool success = ITokenHub(tokenHubAddr).transferOut{value: msg.value}(msg.sender, msg.value - relayFee - minAckRelayFee);
+        require(success, "TransferOut failed");
+        return success;
+    }
+
     // ==================== External view functions =======================
     function getAccountId(address _account) external view returns(uint256) {
         return accountToId[_account];
@@ -169,12 +190,14 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     }
 
     function getBatchAccountById(uint256[] calldata _ids) external view returns(address[] memory _accounts) {
+        _accounts = new address[](_ids.length);
         for (uint256 i; i < _ids.length; ++i) {
             _accounts[i] = idToAccount[_ids[i]];
         }
     }
 
     function getBatchAccountName(address[] calldata _accounts) external view returns(string[] memory _names) {
+        _names = new string[](_accounts.length);
         for (uint256 i; i < _accounts.length; ++i) {
             _names[i] = accountToName[_accounts[i]];
         }
@@ -265,25 +288,5 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     // ==================== Utils functions =======================
     function isSameString(string calldata str1, string memory str2) public pure returns(bool) {
         return keccak256(bytes(str1)) == keccak256(bytes(str2));
-    }
-
-    function transferOut() public payable returns(bool) {
-        address tokenHubAddr;
-        address crossChainAddr;
-        if (block.chainid == 56) {
-            tokenHubAddr = 0xeA97dF87E6c7F68C9f95A69dA79E19B834823F25;
-            crossChainAddr = 0x77e719b714be09F70D484AB81F70D02B0E182f7d;
-        } else if (block.chainid == 97) {
-            tokenHubAddr = 0xED8e5C546F84442219A5a987EE1D820698528E04;
-            crossChainAddr = 0xa5B2c9194131A4E0BFaCbF9E5D6722c873159cb7;
-        } else {
-            require(false, "Not support");
-        }
-        (uint256 relayFee, uint256 minAckRelayFee) = ICrossChain(crossChainAddr).getRelayFees();
-        require(msg.value >= 5e15 + relayFee + minAckRelayFee, "Insufficient funds");
-
-        bool transferSuccess = ITokenHub(tokenHubAddr).transferOut{value: msg.value}(msg.sender, 5e15);
-        require(transferSuccess, "TransferOut failed");
-        return transferSuccess;
     }
 }

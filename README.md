@@ -17,7 +17,6 @@ forge install OpenZeppelin/openzeppelin-contracts-upgradeable@v4.9.3 --no-commit
 
 ```shell
  forge test --via-ir --use ${COMPILER_VERSION}
- forge test --match-path test/CodexHub.t.sol --fork-url ${RPC_URL} -vvvvv  --via-ir --use ${COMPILER_VERSION}
 ```
 
 ## Deploy
@@ -38,5 +37,5 @@ forge script ./script/2-upgrade-account-manager.s.sol --rpc-url ${RPC_URL} --leg
 
 ```shell
 source .env
-forge script ./script/3-migrate-account-manager.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use ${COMPILER_VERSION}  --verify --etherscan-api-key ${BSC_API_KEY}
+forge script ./script/3-migrate-account-manager.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use ${COMPILER_VERSION}
 ```
