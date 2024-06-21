@@ -12,6 +12,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
 
     uint256 public nextAccountId;
+    address public operator;
     mapping(address => uint256) public accountToId;
     mapping(uint256 => address) public idToAccount;
     mapping(address => string) public accountToName;
@@ -39,6 +40,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         __Ownable_init();
         transferOwnership(_owner);
         nextAccountId = 1;
+        operator = _owner;
     }
 
     // ==================== External functions =======================
@@ -52,6 +54,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         string calldata _website,
         string[] calldata _socialAccounts
     ) external payable returns (bool) {
+        require(msg.sender == _account || msg.sender == operator, "Not allow");
         require(bytes(_name).length != 0, "Empty name");
         require(accountToId[_account] == 0, "Already registered");
         require(nameToAccount[_name] == address(0), "Duplicated name");

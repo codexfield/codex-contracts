@@ -33,3 +33,10 @@ forge script ./script/1-deploy-account-manager.s.sol --rpc-url ${RPC_URL} --lega
 source .env
 forge script ./script/2-upgrade-account-manager.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use ${COMPILER_VERSION}  --verify --etherscan-api-key ${BSC_API_KEY}
 ```
+
+## Migrate
+
+```shell
+source .env
+forge script ./script/3-migrate-account-manager.s.sol --rpc-url ${RPC_URL} --legacy --broadcast --via-ir --private-key ${OWNER_PRIVATE_KEY} --use ${COMPILER_VERSION}  --verify --etherscan-api-key ${BSC_API_KEY}
+```
