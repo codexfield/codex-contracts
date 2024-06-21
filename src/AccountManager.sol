@@ -169,12 +169,14 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     }
 
     function getBatchAccountById(uint256[] calldata _ids) external view returns(address[] memory _accounts) {
+        _accounts = new address[](_ids.length);
         for (uint256 i; i < _ids.length; ++i) {
             _accounts[i] = idToAccount[_ids[i]];
         }
     }
 
     function getBatchAccountName(address[] calldata _accounts) external view returns(string[] memory _names) {
+        _names = new string[](_accounts.length);
         for (uint256 i; i < _accounts.length; ++i) {
             _names[i] = accountToName[_accounts[i]];
         }
@@ -279,11 +281,11 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         } else {
             require(false, "Not support");
         }
-        (uint256 relayFee, uint256 minAckRelayFee) = ICrossChain(crossChainAddr).getRelayFees();
-        require(msg.value >= 5e15 + relayFee + minAckRelayFee, "Insufficient funds");
 
-        bool transferSuccess = ITokenHub(tokenHubAddr).transferOut{value: msg.value}(msg.sender, 5e15);
-        require(transferSuccess, "TransferOut failed");
-        return transferSuccess;
+        (uint256 relayFee, uint256 minAckRelayFee) = ICrossChain(crossChainAddr).getRelayFees();
+        require(msg.value > relayFee + minAckRelayFee, "Insufficient funds");
+        bool success = ITokenHub(tokenHubAddr).transferOut{value: msg.value}(msg.sender, msg.value - relayFee - minAckRelayFee);
+        require(success, "TransferOut failed");
+        return success;
     }
 }
