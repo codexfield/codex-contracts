@@ -52,7 +52,6 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
         string calldata _website,
         string[] calldata _socialAccounts
     ) external payable returns (bool) {
-        require(_account == msg.sender, "Not allowed");
         require(bytes(_name).length != 0, "Empty name");
         require(accountToId[_account] == 0, "Already registered");
         require(nameToAccount[_name] == address(0), "Duplicated name");
