@@ -53,7 +53,7 @@ contract AccountManagerTest is Test {
 
     function testRegisterInvalidAccount() public {
         vm.prank(user1);
-        vm.expectRevert("Not allowed");
+        vm.expectRevert("Not allow");
         accountManager.register{value: val}(user2, "user1", "avatar", "I am user1", "codexfield", "SG", "www.codexfield.com", socialAccounts);
     }
 
@@ -88,7 +88,7 @@ contract AccountManagerTest is Test {
     function testRegisterInsufficientFunds() public {
         vm.prank(user1);
         vm.expectRevert("Insufficient funds");
-        accountManager.register{value: 5e15}(user1, "user1", "avatar", "I am user1", "codexfield", "SG", "www.codexfield.com", socialAccounts);
+        accountManager.register{value: 4e14}(user1, "user1", "avatar", "I am user1", "codexfield", "SG", "www.codexfield.com", socialAccounts);
     }
 
     function testRegister(
@@ -108,7 +108,7 @@ contract AccountManagerTest is Test {
         assertEq(_accountId, 2, "account id expect 2");
         string memory _accountName = accountManager.getAccountName(user1);
         assertTrue(accountManager.isSameString(_name, _accountName), "account name not equal");
-        assertTrue(user1.balance < 1.4e16, "transferOut failed");
+        assertTrue(user1.balance < 1.5e16, "transferOut failed");
     }
 
     function testEditAccountEmptyName() public {

@@ -16,7 +16,7 @@ forge install OpenZeppelin/openzeppelin-contracts-upgradeable@v4.9.3 --no-commit
 ## Test
 
 ```shell
- forge test --via-ir --use ${COMPILER_VERSION}
+ forge test --fork-url ${RPC_URL} --via-ir --use ${COMPILER_VERSION}
 ```
 
 ## Deploy
