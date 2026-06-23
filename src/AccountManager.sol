@@ -104,6 +104,7 @@ contract AccountManager is IAccountManager,OwnableUpgradeable {
     ) external returns (bool) {
         address _account = msg.sender;
         string memory _oldName = accountToName[_account];
+        require(bytes(_oldName).length != 0, "Register first");
         require(bytes(_name).length != 0, "Empty name");
         require(isSameString(_name, _oldName) || nameToAccount[_name] == address(0), "Duplicated name");
 
